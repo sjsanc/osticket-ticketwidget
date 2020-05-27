@@ -9,6 +9,191 @@
 // @description A little dashboard widget for all your queues to relax in. Neat!
 // ==/UserScript==
 
+let style = document.createElement('style');
+style.innerHTML = `
+* {
+    padding: 0;
+    margin: 0;
+}
+
+.w-container {
+    position: absolute;
+    top: 400px;
+    left: 20px; 
+    
+    width: 260px;
+    border: 4px solid #dbdbdb;
+    border-radius: 8px;
+    background-color: white;
+    
+    display: flex;
+    flex-direction: column;
+}
+
+.w-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    
+    background-color: #F7f7f7;
+    padding: 5px;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 2px dashed #dbdbdb;
+    
+    position: relative;
+}
+.w-header h1 {
+    font-size: 1.5rem;
+    color: #EB8C24;
+}
+.w-header p {
+    font-size: 1.1rem;
+    font-weight: bold;  
+    opacity: 0.2;
+    position: absolute;
+    top: 6px;
+    left: 145px;
+}
+.w-header i {
+    color: #bdbdbd;
+    font-size: 0.9rem;
+    padding-top: 5px;
+    width: 25px;
+    height: 20px;
+    text-align: center;
+}
+.w-header i:hover {
+    color: #0088CC
+}
+
+.w-new-queue {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px;
+    border-bottom: 2px dashed #dbdbdb;
+    height: 30px;
+}
+.w-new-queue input {
+    height: 26px;
+    padding: 0;
+    border: 0;
+    background-color: #F7f7f7;
+    padding-left: 5px;
+    border: 1px solid white;
+    cursor: pointer;
+
+}
+.w-new-queue input:focus {
+    border: 1px solid #0088CC;
+}
+.w-new-queue input:first-of-type {
+    width: 25px;
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+}
+
+.w-new-queue input:last-of-type {
+    width: 140px;
+}
+
+.w-new-queue button {
+    width: 65px;
+    height: 27px;
+    border: 0;
+    padding: 5px;
+    font-weight: bold;
+    color: #EB8C24;
+    background-color: #F7f7f7;
+    border-radius: 4px;    
+    cursor: pointer;
+}
+.w-new-queue button:hover, button:focus {
+    background-color: #0088CC;
+    color: white;
+}
+.w-new-queue button:active {
+    background-color: #006395
+   
+}
+.w-queue {
+    display: flex;
+    justify-content: space-between;
+    height: 18px;
+    padding: 7px;
+    align-items: center;
+    color: #484848;
+}
+.w-queue:last-of-type {
+    border-radius: 0 0 5px 5px;
+}
+.w-queue div:first-of-type {
+    display: flex; 
+}
+.w-amount {
+    color: #EB8C24;
+    font-weight: bold;
+}
+.w-queue:hover {
+    cursor: pointer;    
+    background-color: #0088CC;
+    text-decoration: none;
+
+}
+.w-queue a {
+    color: #484848;
+    width: 200px;
+}
+.w-queue:hover a {
+    color: white;
+}
+
+.w-queue i {
+    display: none;
+}
+.w-queue:hover i {
+    display: inline;
+    font-size: 0.8rem;
+    padding: 3px;
+    color: white;
+}
+.w-queue i:hover {
+    cursor: pointer;
+    color: #004b71
+}
+
+.w-info-div {
+    width: 120px;
+    position: absolute;
+    top: -4px;
+    right: -145px;
+    border: 4px solid #dbdbdb;
+    border-radius: 8px;
+    background-color: white;
+    padding: 5px;
+    opacity: 0;
+}
+.shown {
+    opacity: 1;
+}
+.w-info-div p {
+    font-size: 0.8rem;
+    color: #484848;
+}
+.w-info-div a {
+    color: #EB8C24;
+}
+.w-info-div a:hover {
+    color: #0088CC;
+}
+
+.hackiestClassEver:hover {
+    text-decoration: none;
+}
+
+`
+document.body.appendChild(style);
+ 
 let queues = [] // array of queue objects
 
 const setStorage = () => {
@@ -28,10 +213,6 @@ const Queue = function(name, queueId) {
   this.id=queues.length;
   queues.push(this);
 }
-
-// test queues
-// const queue1 = new Queue("Unassinged Tickets", 34);
-// const queue2 = new Queue("Total Tickets", 6);
 
 async function userData() {
   let response = await fetch('http://gbuk-ticketsystem/osticket/scp/ajax.php/queue/counts');
@@ -81,7 +262,7 @@ const editQueue = function() {
 const renderWidget = function(){
   const widgetDiv = document.createElement('div')
   const widgetDivContent = `
-    
+
     <div class="w-container" id="wContainer">
       <div class="w-header">
         <h1>Ticket Widget</h1>
@@ -164,13 +345,8 @@ const updateTickets = function() {
   })
 }; 
 
-
-
-
-
 getData(); // get data on page load
 
 setInterval(getData, 30000);// refresh ticket values every 30s
-
 
 
